@@ -28,8 +28,8 @@ def desenvolvedor_procurar(id):
             desenvolvedor = desenvolvedores[id]
             print(desenvolvedor)
             return jsonify(desenvolvedor)
-        except:
-            return jsonify({'status': 'não encontrado'})
+        except Exception as ex:
+            return jsonify({'status': f'não encontrado {ex}'})
 
     elif request.method == 'PUT':
         dados = json.loads(request.data)
