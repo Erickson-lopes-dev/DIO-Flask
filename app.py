@@ -1,28 +1,57 @@
-from flask import Flask, jsonify, request
 import json
+
+from flask import Flask, jsonify, request
+
 app = Flask(__name__)
 
+desenvolvedores = [
+    {'nome': 'Erickson',
+     'habilidades': ['python', 'Flask']},
+    {'nome': 'Daniel',
+     'habilidades': ['Piloto', 'Arruma role']},
+    {'nome': 'Renan',
+     'habilidades': ['Motorista', 'Evangélico']},
+    {'nome': 'Leticia',
+     'habilidades': ['python', 'flask']},
+]
 
-@app.route('/<int:pk>')
-def pessoas(pk):
-    # retorna um texto em json
-    return jsonify({'pk': pk, 'nome': 'Erickson', 'profissao': 'Carpinteiro'})
+
+# @app.route('/dev/', methods=['GET'])
+# def desenvolvedor():
+#     return jsonify({'nome': 'Erickson'})
+
+# retorna um dev e altera ou deleta
+@app.route('/dev/<int:id>/', methods=['GET', 'PUT', 'DELETE'])
+def desenvolvedor_procurar(id):
+    if request.method == 'GET':
+        try:
+            desenvolvedor = desenvolvedores[id]
+            print(desenvolvedor)
+            return jsonify(desenvolvedor)
+        except:
+            return jsonify({'status': 'não encontrado'})
+
+    elif request.method == 'PUT':
+        dados = json.loads(request.data)
+        print(dados)
+        desenvolvedores[id] = dados
+        return jsonify(dados)
+
+    elif request.method == "DELETE":
+        desenvolvedores.pop(id)
+        return jsonify({'status': 'delete'})
 
 
-# @app.route('/soma/<int:v1>/<int:v2>')
-# def soma(v1, v2):
-#     return {'soma': v1 + v2}
-
-
-@app.route('/soma/', methods=['POST', 'GET'])
-def soma_post():
+# lista todos os dev e cria um novo
+@app.route('/dev/', methods=['GET', 'POST'])
+def lista_dev():
     if request.method == 'POST':
         dados = json.loads(request.data)
-        soma = sum(dados['valores'])
-        return jsonify({'soma': soma})
+        desenvolvedores.append(dados)
 
-    elif request.method == 'GET':
-        return jsonify({'message': 'Some os valores enviado como método post'})
+        return jsonify({'sucess': 'dados adicionados'})
+    if request.method == 'GET':
+        return jsonify({'devs': desenvolvedores})
 
 
 if __name__ == '__main__':
